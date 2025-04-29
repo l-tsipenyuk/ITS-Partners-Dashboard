@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>ITS Partners Analytics Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
@@ -34,7 +35,8 @@
             width: 140px;
             height: 110px;
             object-fit: contain;
-            display: none; /* Hidden by default */
+            display: none;
+            /* Hidden by default */
         }
 
         .logo {
@@ -46,7 +48,7 @@
             background: white;
             padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
 
@@ -58,13 +60,13 @@
             border-radius: 4px;
             cursor: pointer;
             margin-bottom: 20px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
 
         .toggle-upload:hover {
-        background: #e9e9e9;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            background: #e9e9e9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
         }
 
         .file-upload {
@@ -86,7 +88,7 @@
             background: white;
             padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         select {
@@ -96,11 +98,25 @@
             min-width: 150px;
         }
 
-        .metrics {
+        /* .metrics {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 20px;
+        } */
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
         }
 
         .metric-card {
@@ -108,7 +124,7 @@
             padding: 20px;
             border-radius: 8px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .metric-card.clickable {
@@ -140,7 +156,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             height: 300px;
         }
 
@@ -151,7 +167,9 @@
             color: var(--primary-green);
         }
 
-        .startup-table, .reports-table, .activities-table {
+        .startup-table,
+        .reports-table,
+        .activities-table {
             height: 250px;
             overflow-y: auto;
             width: 100%;
@@ -174,7 +192,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -194,7 +213,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -210,61 +229,62 @@
             overflow-y: auto;
         }
 
+        #engagedStartupsModal th:nth-child(1),
+        /* Startup */
+        #engagedStartupsModal td:nth-child(1) {
+            width: 15%;
+            min-width: 120px;
+        }
 
-#engagedStartupsModal th:nth-child(1), /* Startup */
-#engagedStartupsModal td:nth-child(1) {
-    width: 15%;
-    min-width: 120px;
-}
+        #engagedStartupsModal th:nth-child(2),
+        /* Partner */
+        #engagedStartupsModal td:nth-child(2) {
+            width: 10%;
+            min-width: 80px;
+        }
 
-#engagedStartupsModal th:nth-child(2), /* Partner */
-#engagedStartupsModal td:nth-child(2) {
-    width: 10%;
-    min-width: 80px;
-}
+        #engagedStartupsModal th:nth-child(3),
+        /* Category */
+        #engagedStartupsModal td:nth-child(3) {
+            width: 12%;
+            min-width: 100px;
+        }
 
-#engagedStartupsModal th:nth-child(3), /* Category */
-#engagedStartupsModal td:nth-child(3) {
-    width: 12%;
-    min-width: 100px;
-}
+        #engagedStartupsModal th:nth-child(4),
+        #engagedStartupsModal td:nth-child(4) {
+            width: 12%;
+            min-width: 100px;
+        }
 
-#engagedStartupsModal th:nth-child(4), /* Funding Stage */
-#engagedStartupsModal td:nth-child(4) {
-    width: 12%;
-    min-width: 100px;
-}
+        #engagedStartupsModal th:nth-child(5),
+        #engagedStartupsModal td:nth-child(5) {
+            width: 15%;
+            min-width: 120px;
+        }
 
-#engagedStartupsModal th:nth-child(5), /* Contact */
-#engagedStartupsModal td:nth-child(5) {
-    width: 15%;
-    min-width: 120px;
-}
+        #engagedStartupsModal th:last-child,
+        #engagedStartupsModal td:last-child {
+            width: 36%;
+            min-width: 200px;
+        }
 
-#engagedStartupsModal th:last-child, /* Comment */
-#engagedStartupsModal td:last-child {
-    width: 36%;
-    min-width: 200px;
-}
+        #engagedStartupsModal table {
+            width: 100%;
+            table-layout: fixed;
+        }
 
-#engagedStartupsModal table {
-    width: 100%;
-    table-layout: fixed;
-}
+        #engagedStartupsModal td,
+        #engagedStartupsModal th {
+            padding: 12px 8px;
+            vertical-align: top;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
 
-#engagedStartupsModal td, 
-#engagedStartupsModal th {
-    padding: 12px 8px;
-    vertical-align: top;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-/* Ensure the modal content doesn't overflow horizontally */
-#engagedStartupsModal .modal-content {
-    overflow-x: hidden;
-}
+        #engagedStartupsModal .modal-content {
+            overflow-x: hidden;
+        }
 
         .close {
             float: right;
@@ -281,7 +301,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
 
@@ -290,8 +310,7 @@
             white-space: normal;
             word-wrap: break-word;
         }
-        
-        /* Style for clickable links */
+
         .contact-link {
             color: #00A651;
             text-decoration: underline;
@@ -304,7 +323,8 @@
             margin-top: 20px;
         }
 
-        .modal th, .modal td {
+        .modal th,
+        .modal td {
             padding: 12px 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -319,18 +339,18 @@
             max-width: 300px;
             white-space: normal;
             word-wrap: break-word;
-        }     
-        
+        }
+
         .contacted-row {
-            background-color: #e6ffe6; /* Light green background */
+            background-color: #e6ffe6;
         }
 
         .contacted-row:hover {
-            background-color: #ccffcc; /* Slightly darker green on hover */
+            background-color: #ccffcc;
         }
-        
     </style>
 </head>
+
 <body>
     <div class="header-section">
         <h1>ITS Partners Analytics Dashboard</h1>
@@ -343,7 +363,7 @@
             <img src="./logo.png" alt="Ignite The Spark" class="logo">
         </div>
     </div>
-    
+
     <div class="upload-section" id="uploadSection">
         <div class="file-upload">
             <input type="file" id="csvFile" accept=".csv" />
@@ -351,7 +371,7 @@
                 <option value="all">All Partners</option>
             </select>
         </div>
-        <p>Please upload your CSV file with the following columns: Partner, Report, Date, Startup, Category, Stage, Country, Contact, Engaged, Link, Engagement</p>
+        <p>Please upload your CSV file.</p>
     </div>
 
     <button class="toggle-upload" onclick="toggleUploadSection()">Hide Upload Section</button>
@@ -374,10 +394,10 @@
             <div class="metric-value" id="totalStartups">0</div>
             <div class="metric-label">Total Startups</div>
         </div>
-        <div class="metric-card clickable" onclick="showEngagedStartupsModal()">
+        <!-- <div class="metric-card clickable" onclick="showEngagedStartupsModal()">
             <div class="metric-value" id="engagedStartups">0</div>
             <div class="metric-label">Engaged Startups (Click for details)</div>
-        </div>
+        </div> -->
         <div class="metric-card clickable" onclick="showActivitiesModal()">
             <div class="metric-value" id="totalActivities">0</div>
             <div class="metric-label">Engagement Activities (Click for details)</div>
@@ -415,46 +435,47 @@
             </div>
         </div>
 
-    <div id="reportsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="hideReportsModal()">&times;</span>
-            <h2>Reports Details</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Report</th>
-                        <th>Partner</th>
-                        <th>Date</th>
-                        <th>Total Startups</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody id="reportsTableBody">
-                </tbody>
-            </table>
+        <div id="reportsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideReportsModal()">&times;</span>
+                <h2>Reports Details</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Report</th>
+                            <th>Partner</th>
+                            <th>Date</th>
+                            <th>Total Startups</th>
+                            <th>Description</th>
+                            <th>Report Link</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <div id="activitiesModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="hideActivitiesModal()">&times;</span>
-            <h2>Engagement Activities</h2>
-            <table class="activities-table">
-                <thead>
-                    <tr>
-                        <th>Activity</th>
-                        <th>Partner</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody id="activitiesTableBody">
-                </tbody>
-            </table>
+        <div id="activitiesModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideActivitiesModal()">&times;</span>
+                <h2>Engagement Activities</h2>
+                <table class="activities-table">
+                    <thead>
+                        <tr>
+                            <th>Activity</th>
+                            <th>Partner</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activitiesTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <div id="engagedStartupsModal" class="modal">
+        <!-- <div id="engagedStartupsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="hideEngagedStartupsModal()">&times;</span>
             <h2>Engaged Startups Details</h2>
@@ -473,591 +494,701 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> -->
 
-    <script>
-        let data = [];
-        let categoryChart, stageChart, countryChart;
+        <script>
+            let data = [];
+            let categoryChart, stageChart, countryChart;
 
-        const chartColors = [
-            '#00A651', // Primary green
-            '#FFD100', // Yellow
-            '#00A9E0', // Blue
-            '#007B3C', // Darker green
-            '#FFE666', // Lighter yellow
-            '#66D1FF', // Lighter blue
-            '#004D25', // Darkest green
-            '#B39400', // Darker yellow
-            '#007AA3'  // Darker blue
-        ];
+            const chartColors = [
+                '#00A651', // Primary green
+                '#FFD100', // Yellow
+                '#00A9E0', // Blue
+                '#007B3C', // Darker green
+                '#FFE666', // Lighter yellow
+                '#66D1FF', // Lighter blue
+                '#004D25', // Darkest green
+                '#B39400', // Darker yellow
+                '#007AA3'  // Darker blue
+            ];
 
-        function toggleUploadSection() {
-            const section = document.getElementById('uploadSection');
-            section.style.display = section.style.display === 'none' ? 'block' : 'none';
-        }
-
-        // Initialize charts
-        function initCharts() {
-            if (categoryChart) categoryChart.destroy();
-            if (stageChart) stageChart.destroy();
-            if (countryChart) countryChart.destroy();
-            
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        font: {
-                            size: 20,
-                            weight: 'bold'
-                        }
-                    },
-                    legend: {
-                        position: 'right'
-                    }
-                }
-            };
-
-            categoryChart = createPieChart('categoryChart', [], [], 'Startups by Category', chartOptions);
-            stageChart = createPieChart('stageChart', [], [], 'Startups by Funding Stage', chartOptions);
-            countryChart = createPieChart('countryChart', [], [], 'Startups by Country', chartOptions);
-        }
-
-        document.getElementById('csvFile').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    
-    document.getElementById('loading').style.display = 'block';
-    
-    reader.onload = function(event) {
-        try {
-            const csvData = event.target.result;
-            
-            Papa.parse(csvData, {
-                header: true,
-                skipEmptyLines: 'greedy',
-                delimitersToGuess: [',', '\t', '|', ';'],
-                transformHeader: h => h.trim(),
-                complete: function(results) {
-                    try {
-                        data = results.data
-                            .filter(row => row.Partner && row.Report)
-                            .map(row => {
-                                return {
-                                    partner: row.Partner || '',
-                                    quarter: row.Report || '',
-                                    date: row.Date || '',
-                                    startup: (row.Startup || '').trim(),
-                                    category: row.Category || '',
-                                    stage: row.Stage || '',
-                                    country: row.Country || '',
-                                    contact: row.Contact || '',
-                                    engaged: row.Engaged || '',
-                                    link: row.Link || '',
-                                    engagement: row.Engagement || '',
-                                    comments: row['Comment'] || row['Comment '] || ''
-                                };
-                            });
-
-                        updateFilters();
-                        initCharts();
-                        updateDashboard();
-                        
-                    } catch (error) {
-                        console.error('Error in data processing:', error);
-                        alert('Error processing the data. Please check the console for details.');
-                    }
-                },
-                error: function(error) {
-                    console.error('PapaParse Error:', error);
-                    alert('Error parsing the CSV file. Please check the format.');
-                }
-            });
-            
-        } catch (error) {
-            console.error('Error in file reading:', error);
-            alert('Error reading the file. Please try again.');
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
-    };
-    
-    reader.onerror = function(error) {
-        console.error('FileReader Error:', error);
-        document.getElementById('loading').style.display = 'none';
-        alert('Error reading the file. Please try again.');
-    };
-    
-    reader.readAsText(file);
-});
-
-    function processChartData(data, minCategories) {
-        // Sort entries by value in descending order
-        const sortedEntries = Object.entries(data).sort((a, b) => b[1] - a[1]);
-        
-        const mainCategories = {};
-        let otherSum = 0;
-        
-        sortedEntries.forEach(([key, value], index) => {
-            if (index < minCategories) {
-                // Always include top N categories
-                mainCategories[key] = value;
-            } else {
-                otherSum += value;
+            function toggleUploadSection() {
+                const section = document.getElementById('uploadSection');
+                section.style.display = section.style.display === 'none' ? 'block' : 'none';
             }
-        });
-        
-        if (otherSum > 0) {
-            mainCategories['Other'] = otherSum;
-        }
-        
-        return mainCategories;
-    }
 
-    function showEngagedStartupsModal() {
-    const selectedPartner = document.getElementById('partnerFilter').value;
-    document.getElementById('engagedStartupsModal').style.display = 'flex';
-    updateEngagedStartupsTable(selectedPartner);
-}
+            function initCharts() {
+                if (categoryChart) categoryChart.destroy();
+                if (stageChart) stageChart.destroy();
+                if (countryChart) countryChart.destroy();
 
-
-    function hideEngagedStartupsModal() {
-        document.getElementById('engagedStartupsModal').style.display = 'none';
-    }
-
-    function updateEngagedStartupsTable(selectedPartner) {
-    const tableBody = document.getElementById('engagedStartupsTableBody');
-    tableBody.innerHTML = '';
-    
-    const engagedStartups = data.filter(item => 
-        item.startup && 
-        item.startup.trim() !== '' &&
-        item.engaged?.toLowerCase() === 'yes' &&
-        (selectedPartner === 'all' || item.partner === selectedPartner)
-    );
-    
-    // Sort the array to have contacted startups first
-    const sortedStartups = engagedStartups.sort((a, b) => {
-        // Sort by engagement status (Contacted first)
-        const aContacted = a.engagement === 'Contacted';
-        const bContacted = b.engagement === 'Contacted';
-        
-        if (aContacted && !bContacted) return -1;
-        if (!aContacted && bContacted) return 1;
-        
-        // If engagement status is the same, sort by date (newest first)
-        if (a.date && b.date) {
-            return new Date(b.date) - new Date(a.date);
-        }
-        return 0;
-    });
-    
-    sortedStartups.forEach(item => {
-        const row = tableBody.insertRow();
-        
-        // Add the contacted-row class if engagement is "Contacted"
-        if (item.engagement === 'Contacted') {
-            row.classList.add('contacted-row');
-        }
-        
-        const nameCell = row.insertCell(0);
-        const nameLink = document.createElement('a');
-        if (item.link && item.link.trim()) {
-            nameLink.href = item.link;
-        } else {
-            nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
-        }
-        nameLink.textContent = item.startup;
-        nameLink.className = 'startup-link';
-        nameLink.target = '_blank';
-        nameCell.appendChild(nameLink);
-        
-        row.insertCell(1).textContent = item.partner;
-        row.insertCell(2).textContent = item.category;
-        row.insertCell(3).textContent = item.stage;
-        
-        const contactCell = row.insertCell(4);
-        if (item.contact && item.contact.toLowerCase().startsWith('http')) {
-            const contactLink = document.createElement('a');
-            contactLink.href = item.contact;
-            contactLink.textContent = item.contact;
-            contactLink.className = 'contact-link';
-            contactLink.target = '_blank';
-            contactCell.appendChild(contactLink);
-        } else {
-            contactCell.textContent = item.contact;
-        }
-        
-        row.insertCell(5).textContent = item.comments || '';
-    });
-}
-
-function updateDashboard() {
-    const selectedPartner = document.getElementById('partnerFilter').value;
-    const reportFilter = document.getElementById('reportFilter').value;
-    
-    // Calculate engagement activities
-    const activitiesCount = data.filter(item => 
-        item.quarter === 'Engagement Activity' &&
-        (selectedPartner === 'all' || item.partner === selectedPartner)
-    ).length;
-    document.getElementById('totalActivities').textContent = activitiesCount;
-
-    // Calculate engaged startups
-    const engagedStartups = data.filter(item => 
-        item.startup && 
-        item.startup.trim() !== '' &&
-        item.engaged?.toLowerCase() === 'yes' &&
-        (selectedPartner === 'all' || item.partner === selectedPartner)
-    );
-    document.getElementById('engagedStartups').textContent = engagedStartups.length;
-
-    // Filter data
-    const filteredData = data.filter(item => {
-        const partnerMatch = selectedPartner === 'all' || item.partner === selectedPartner;
-        const isNotMatched = item.quarter !== 'Matched Startup';
-        const isNotActivity = item.quarter !== 'Engagement Activity';
-        const hasStartup = item.startup && item.startup.trim() !== '';
-        return partnerMatch && isNotMatched && isNotActivity && hasStartup;
-    });
-
-    // Apply report filter
-    const reportFilteredData = filteredData.filter(item => 
-        reportFilter === 'all' || item.quarter === reportFilter
-    );
-    document.getElementById('totalStartups').textContent = reportFilteredData.length;
-
-    // Calculate total reports
-    const uniqueReports = new Set(
-        data
-            .filter(item => 
-                (selectedPartner === 'all' || item.partner === selectedPartner) &&
-                item.quarter !== 'Engagement Activity' &&
-                item.quarter !== 'Matched Startup'
-            )
-            .map(item => item.quarter)
-    );
-    document.getElementById('totalReports').textContent = uniqueReports.size;
-
-    updateTable(reportFilteredData);
-    updateCharts(reportFilteredData);
-    updateReportsTable(filteredData);
-}
-
-
-function updatePartnerLogo(selectedPartner) {
-            // Hide all partner logos first
-            document.querySelectorAll('.partner-logo').forEach(logo => {
-                logo.style.display = 'none';
-            });
-
-            // Show the selected partner's logo
-            if (selectedPartner !== 'all') {
-                const logoMap = {
-                    'E.ON': 'eon-logo',
-                    'Tadiran': 'tadiran-logo',
-                    'IEC': 'iec-logo'
-                };
-
-                const logoId = logoMap[selectedPartner];
-                if (logoId) {
-                    document.getElementById(logoId).style.display = 'block';
-                }
-            }
-        }
-
-        // Modify the existing partner filter event listener
-        document.getElementById('partnerFilter').addEventListener('change', (e) => {
-            updatePartnerLogo(e.target.value);
-            updateReportFilter();
-            updateDashboard();
-        });
-
-        function updateTable(filteredData) {
-    const tableBody = document.getElementById('startupTableBody');
-    tableBody.innerHTML = '';
-    
-    const validData = filteredData.filter(item => item.startup && item.startup.trim() !== '');
-    
-    validData.forEach(item => {
-        const row = tableBody.insertRow();
-        
-        const nameCell = row.insertCell(0);
-        const nameLink = document.createElement('a');
-        
-        if (item.link && item.link.trim() !== '') {
-            nameLink.href = item.link;
-        } else {
-            nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
-        }
-        
-        nameLink.textContent = item.startup;
-        nameLink.className = 'startup-link';
-        nameLink.target = '_blank';
-        nameLink.title = item.link ? item.link : 'Search on Google';
-        
-        nameCell.appendChild(nameLink);
-        
-        row.insertCell(1).textContent = item.category;
-        row.insertCell(2).textContent = item.stage;
-        
-        const contactCell = row.insertCell(3);
-        if (item.contact && item.contact.toLowerCase().startsWith('http')) {
-            const contactLink = document.createElement('a');
-            contactLink.href = item.contact;
-            contactLink.textContent = item.contact;
-            contactLink.className = 'contact-link';
-            contactLink.target = '_blank';
-            contactCell.appendChild(contactLink);
-        } else {
-            contactCell.textContent = item.contact;
-        }
-    });
-}
-
-        function updateFilters() {
-    // Update partner filter
-    const partners = [...new Set(data.map(item => item.partner))].sort();
-    const partnerFilter = document.getElementById('partnerFilter');
-    partnerFilter.innerHTML = '<option value="all">All Partners</option>';
-    partners.forEach(partner => {
-        const option = document.createElement('option');
-        option.value = partner;
-        option.textContent = partner;
-        partnerFilter.appendChild(option);
-    });
-
-    updateReportFilter();
-}
-
-function updateReportFilter() {
-    const selectedPartner = document.getElementById('partnerFilter').value;
-    const reportFilter = document.getElementById('reportFilter');
-    
-    const reportInfo = {};
-    data
-        .filter(item => 
-            item.quarter !== 'Engagement Activity' && 
-            item.quarter !== 'Matched Startup' &&
-            item.startup && 
-            item.startup.trim() !== ''
-        )
-        .forEach(item => {
-            if (selectedPartner === 'all' || item.partner === selectedPartner) {
-                if (!reportInfo[item.quarter]) {
-                    reportInfo[item.quarter] = {
-                        count: 0,
-                        date: item.date
-                    };
-                }
-                reportInfo[item.quarter].count++;
-            }
-        });
-    
-    const relevantReports = Object.entries(reportInfo)
-        .filter(([_, info]) => info.count > 0)
-        .sort((a, b) => {
-            const dateA = new Date(a[1].date);
-            const dateB = new Date(b[1].date);
-            return dateB - dateA;
-        })
-        .map(([report]) => report);
-    
-    reportFilter.innerHTML = '<option value="all">All Reports</option>';
-    relevantReports.forEach(report => {
-        const option = document.createElement('option');
-        option.value = report;
-        option.textContent = report;
-        reportFilter.appendChild(option);
-    });
-}
-
-
-        document.getElementById('partnerFilter').addEventListener('change', () => {
-            updateReportFilter(); // Update report filter first
-            updateDashboard(); // Then update dashboard
-        });
-
-        document.getElementById('reportFilter').addEventListener('change', updateDashboard);
-
-        function createPieChart(canvasId, data, labels, title, options) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            return new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: chartColors
-                    }]
-                },
-                options: {
-                    ...options,
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        ...options.plugins,
                         title: {
-                            ...options.plugins.title,
-                            text: title
+                            display: true,
+                            font: {
+                                size: 20,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            position: 'right'
                         }
                     }
-                }
-            });
-        }
-
-        function updateCharts(filteredData) {
-    // Update category chart
-    const categories = {};
-    filteredData
-        .filter(item => item.startup && item.startup.trim() !== '')
-        .forEach(item => {
-            categories[item.category] = (categories[item.category] || 0) + 1;
-        });
-    
-    const processedCategories = processChartData(categories, 7);
-    categoryChart.data.labels = Object.keys(processedCategories);
-    categoryChart.data.datasets[0].data = Object.values(processedCategories);
-    categoryChart.update();
-
-    // Update stage chart
-    const stages = {};
-    filteredData
-        .filter(item => item.startup && item.startup.trim() !== '')
-        .forEach(item => {
-            stages[item.stage] = (stages[item.stage] || 0) + 1;
-        });
-    
-    const processedStages = processChartData(stages, 5);
-    stageChart.data.labels = Object.keys(processedStages);
-    stageChart.data.datasets[0].data = Object.values(processedStages);
-    stageChart.update();
-
-    // Update country chart
-    const countries = {};
-    filteredData
-        .filter(item => item.startup && item.startup.trim() !== '')
-        .forEach(item => {
-            countries[item.country] = (countries[item.country] || 0) + 1;
-        });
-    
-    const processedCountries = processChartData(countries, 5);
-    countryChart.data.labels = Object.keys(processedCountries);
-    countryChart.data.datasets[0].data = Object.values(processedCountries);
-    countryChart.update();
-}
-
-function updateReportsTable(filteredData) {
-    const reportsTableBody = document.getElementById('reportsTableBody');
-    reportsTableBody.innerHTML = '';
-
-    const selectedPartner = document.getElementById('partnerFilter').value;
-
-    const reportSummary = {};
-    data
-        .filter(item => 
-            item.quarter !== 'Engagement Activity' && 
-            item.quarter !== 'Matched Startup' &&
-            (selectedPartner === 'all' || item.partner === selectedPartner)
-        )
-        .forEach(item => {
-            const key = `${item.quarter}-${item.partner}-${item.date}`;
-            if (!reportSummary[key]) {
-                reportSummary[key] = {
-                    report: item.quarter,
-                    partner: item.partner,
-                    date: item.date,
-                    count: 0,
-                    comments: ''
                 };
+
+                categoryChart = createPieChart('categoryChart', [], [], 'Startups by Category', chartOptions);
+                stageChart = createPieChart('stageChart', [], [], 'Startups by Funding Stage', chartOptions);
+                countryChart = createPieChart('countryChart', [], [], 'Startups by Country', chartOptions);
             }
-            
-            // Only count items with non-empty startup names
-            if (item.startup && item.startup.trim() !== '') {
-                reportSummary[key].count++;
+
+            document.getElementById('csvFile').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+
+                document.getElementById('loading').style.display = 'block';
+
+                reader.onload = function (event) {
+                    try {
+                        const csvData = event.target.result;
+
+                        Papa.parse(csvData, {
+                            header: true,
+                            skipEmptyLines: 'greedy',
+                            delimitersToGuess: [',', '\t', '|', ';'],
+                            transformHeader: h => h.trim(),
+                            complete: function (results) {
+                                try {
+                                    data = results.data
+                                        .filter(row => row.Partner && row.Report)
+                                        .map(row => {
+                                            return {
+                                                partner: row.Partner || '',
+                                                quarter: row.Report || '',
+                                                date: row.Date || '',
+                                                startup: (row.Startup || '').trim(),
+                                                category: row.Category || '',
+                                                stage: row.Stage || '',
+                                                country: row.Country || '',
+                                                contact: row.Contact || '',
+                                                engaged: row.Engaged || '',
+                                                link: row.Link || '',
+                                                engagement: row.Engagement || '',
+                                                reportLink: row.Report_Link || '',
+                                                comments: row['Comment'] || row['Comment '] || ''
+                                            };
+                                        });
+
+                                    updateFilters();
+                                    initCharts();
+                                    updateDashboard();
+
+                                } catch (error) {
+                                    console.error('Error in data processing:', error);
+                                    alert('Error processing the data. Please check the console for details.');
+                                }
+                            },
+                            error: function (error) {
+                                console.error('PapaParse Error:', error);
+                                alert('Error parsing the CSV file. Please check the format.');
+                            }
+                        });
+
+                    } catch (error) {
+                        console.error('Error in file reading:', error);
+                        alert('Error reading the file. Please try again.');
+                    } finally {
+                        document.getElementById('loading').style.display = 'none';
+                    }
+                };
+
+                reader.onerror = function (error) {
+                    console.error('FileReader Error:', error);
+                    document.getElementById('loading').style.display = 'none';
+                    alert('Error reading the file. Please try again.');
+                };
+
+                reader.readAsText(file);
+            });
+
+            function processChartData(data, minCategories) {
+                const sortedEntries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+
+                const mainCategories = {};
+                let otherSum = 0;
+
+                sortedEntries.forEach(([key, value], index) => {
+                    if (index < minCategories) {
+                        mainCategories[key] = value;
+                    } else {
+                        otherSum += value;
+                    }
+                });
+
+                if (otherSum > 0) {
+                    mainCategories['Other'] = otherSum;
+                }
+
+                return mainCategories;
             }
-            
-            // Add comments for rows with no startup or where engaged is 'no'
-            if ((!item.startup || item.startup.trim() === '' || item.engaged?.toLowerCase() === 'no') 
-                && item.comments && item.comments.trim() !== '') {
-                reportSummary[key].comments = item.comments;
+
+            function showEngagedStartupsModal() {
+                const selectedPartner = document.getElementById('partnerFilter').value;
+                document.getElementById('engagedStartupsModal').style.display = 'flex';
+                updateEngagedStartupsTable(selectedPartner);
             }
-        });
 
-    Object.values(reportSummary)
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .forEach(report => {
-            const row = reportsTableBody.insertRow();
-            row.insertCell(0).textContent = report.report;
-            row.insertCell(1).textContent = report.partner;
-            row.insertCell(2).textContent = report.date;
-            row.insertCell(3).textContent = report.count === 0 ? "-" : report.count;
-            const descCell = row.insertCell(4);
-            descCell.textContent = report.comments;
-            descCell.className = 'description';
-        });
-}
 
-function updateActivitiesTable() {
-    const tableBody = document.getElementById('activitiesTableBody');
-    tableBody.innerHTML = '';
-    
-    const selectedPartner = document.getElementById('partnerFilter').value;
-    
-    const activitiesData = data
-        .filter(item => 
-            item.quarter === 'Engagement Activity' &&
-            (selectedPartner === 'all' || item.partner === selectedPartner)
-        )
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    activitiesData.forEach(item => {
-        const row = tableBody.insertRow();
-        const activityCell = row.insertCell(0);
-        const partnerCell = row.insertCell(1);
-        const dateCell = row.insertCell(2);
-        const descCell = row.insertCell(3);
-        
-        activityCell.textContent = item.engagement;
-        partnerCell.textContent = item.partner;
-        dateCell.textContent = item.date;
-        descCell.textContent = item.comments || '';
-        descCell.className = 'description';
-    });
-
-    document.getElementById('totalActivities').textContent = activitiesData.length;
-}
-        function showReportsModal() {
-            document.getElementById('reportsModal').style.display = 'flex';
-        }
-
-        function hideReportsModal() {
-            document.getElementById('reportsModal').style.display = 'none';
-        }
-
-        function showActivitiesModal() {
-            document.getElementById('activitiesModal').style.display = 'flex';
-            updateActivitiesTable();
-        }
-
-        function hideActivitiesModal() {
-            document.getElementById('activitiesModal').style.display = 'none';
-        }
-
-        // Add event listeners for filters
-        document.getElementById('partnerFilter').addEventListener('change', updateDashboard);
-        document.getElementById('reportFilter').addEventListener('change', updateDashboard);
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const reportsModal = document.getElementById('reportsModal');
-            const activitiesModal = document.getElementById('activitiesModal');
-            if (event.target === reportsModal) {
-                hideReportsModal();
+            function hideEngagedStartupsModal() {
+                document.getElementById('engagedStartupsModal').style.display = 'none';
             }
-            if (event.target === activitiesModal) {
-                hideActivitiesModal();
+
+            function updateEngagedStartupsTable(selectedPartner) {
+                const tableBody = document.getElementById('engagedStartupsTableBody');
+                tableBody.innerHTML = '';
+
+                const engagedStartups = data.filter(item =>
+                    item.startup &&
+                    item.startup.trim() !== '' &&
+                    item.engaged?.toLowerCase() === 'yes' &&
+                    (selectedPartner === 'all' || item.partner === selectedPartner)
+                );
+
+                const sortedStartups = engagedStartups.sort((a, b) => {
+                    const aContacted = a.engagement === 'Contacted';
+                    const bContacted = b.engagement === 'Contacted';
+
+                    if (aContacted && !bContacted) return -1;
+                    if (!aContacted && bContacted) return 1;
+
+                    if (a.date && b.date) {
+                        return new Date(b.date) - new Date(a.date);
+                    }
+                    return 0;
+                });
+
+                sortedStartups.forEach(item => {
+                    const row = tableBody.insertRow();
+
+                    if (item.engagement === 'Contacted') {
+                        row.classList.add('contacted-row');
+                    }
+
+                    const nameCell = row.insertCell(0);
+                    const nameLink = document.createElement('a');
+                    if (item.link && item.link.trim()) {
+                        nameLink.href = item.link;
+                    } else {
+                        nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
+                    }
+                    nameLink.textContent = item.startup;
+                    nameLink.className = 'startup-link';
+                    nameLink.target = '_blank';
+                    nameCell.appendChild(nameLink);
+
+                    row.insertCell(1).textContent = item.partner;
+                    row.insertCell(2).textContent = item.category;
+                    row.insertCell(3).textContent = item.stage;
+
+                    const contactCell = row.insertCell(4);
+                    if (item.contact && item.contact.toLowerCase().startsWith('http')) {
+                        const contactLink = document.createElement('a');
+                        contactLink.href = item.contact;
+                        contactLink.textContent = item.contact;
+                        contactLink.className = 'contact-link';
+                        contactLink.target = '_blank';
+                        contactCell.appendChild(contactLink);
+                    } else {
+                        contactCell.textContent = item.contact;
+                    }
+
+                    row.insertCell(5).textContent = item.comments || '';
+                });
             }
-        }
-    </script>
+
+            function updateDashboard() {
+                const selectedPartner = document.getElementById('partnerFilter').value;
+                const reportFilter = document.getElementById('reportFilter').value;
+
+                // Calculate engagement activities
+                const activitiesCount = data.filter(item =>
+                    item.quarter === 'Engagement Activity' &&
+                    (selectedPartner === 'all' || item.partner === selectedPartner)
+                ).length;
+                document.getElementById('totalActivities').textContent = activitiesCount;
+
+                // Calculate engaged startups
+                // const engagedStartups = data.filter(item =>
+                //     item.startup &&
+                //     item.startup.trim() !== '' &&
+                //     item.engaged?.toLowerCase() === 'yes' &&
+                //     (selectedPartner === 'all' || item.partner === selectedPartner)
+                // );
+                // document.getElementById('engagedStartups').textContent = engagedStartups.length;
+
+                // Filter data
+                const filteredData = data.filter(item => {
+                    const partnerMatch = selectedPartner === 'all' || item.partner === selectedPartner;
+                    const isNotMatched = item.quarter !== 'Matched Startup';
+                    const isNotActivity = item.quarter !== 'Engagement Activity';
+                    const hasStartup = item.startup && item.startup.trim() !== '';
+                    return partnerMatch && isNotMatched && isNotActivity && hasStartup;
+                });
+
+                const reportFilteredData = filteredData.filter(item =>
+                    reportFilter === 'all' || item.quarter === reportFilter
+                );
+                document.getElementById('totalStartups').textContent = reportFilteredData.length;
+
+                const uniqueReports = new Set(
+                    data
+                        .filter(item =>
+                            (selectedPartner === 'all' || item.partner === selectedPartner) &&
+                            item.quarter !== 'Engagement Activity' &&
+                            item.quarter !== 'Matched Startup'
+                        )
+                        .map(item => item.quarter)
+                );
+                document.getElementById('totalReports').textContent = uniqueReports.size;
+
+                updateTable(reportFilteredData);
+                updateCharts(reportFilteredData);
+                updateReportsTable(filteredData);
+            }
+
+            function updatePartnerLogo(selectedPartner) {
+                document.querySelectorAll('.partner-logo').forEach(logo => {
+                    logo.style.display = 'none';
+                });
+
+                if (selectedPartner !== 'all') {
+                    const logoMap = {
+                        'E.ON': 'eon-logo',
+                        'Tadiran': 'tadiran-logo',
+                        'IEC': 'iec-logo'
+                    };
+
+                    const logoId = logoMap[selectedPartner];
+                    if (logoId) {
+                        document.getElementById(logoId).style.display = 'block';
+                    }
+                }
+            }
+
+            document.getElementById('partnerFilter').addEventListener('change', (e) => {
+                updatePartnerLogo(e.target.value);
+                updateReportFilter();
+                updateDashboard();
+            });
+
+            function updateTable(filteredData) {
+                const tableBody = document.getElementById('startupTableBody');
+                tableBody.innerHTML = '';
+
+                const validData = filteredData.filter(item => item.startup && item.startup.trim() !== '');
+
+                validData.forEach(item => {
+                    const row = tableBody.insertRow();
+
+                    const nameCell = row.insertCell(0);
+                    const nameLink = document.createElement('a');
+
+                    if (item.link && item.link.trim() !== '') {
+                        nameLink.href = item.link;
+                    } else {
+                        nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
+                    }
+
+                    nameLink.textContent = item.startup;
+                    nameLink.className = 'startup-link';
+                    nameLink.target = '_blank';
+                    nameLink.title = item.link ? item.link : 'Search on Google';
+
+                    nameCell.appendChild(nameLink);
+
+                    row.insertCell(1).textContent = item.category;
+                    row.insertCell(2).textContent = item.stage;
+
+                    const contactCell = row.insertCell(3);
+                    if (item.contact && item.contact.toLowerCase().startsWith('http')) {
+                        const contactLink = document.createElement('a');
+                        contactLink.href = item.contact;
+                        contactLink.textContent = item.contact;
+                        contactLink.className = 'contact-link';
+                        contactLink.target = '_blank';
+                        contactCell.appendChild(contactLink);
+                    } else {
+                        contactCell.textContent = item.contact;
+                    }
+                });
+            }
+
+            function updateFilters() {
+                const partners = [...new Set(data.map(item => item.partner))].sort();
+                const partnerFilter = document.getElementById('partnerFilter');
+                partnerFilter.innerHTML = '<option value="all">All Partners</option>';
+                partners.forEach(partner => {
+                    const option = document.createElement('option');
+                    option.value = partner;
+                    option.textContent = partner;
+                    partnerFilter.appendChild(option);
+                });
+
+                updateReportFilter();
+            }
+
+            function updateReportFilter() {
+                const selectedPartner = document.getElementById('partnerFilter').value;
+                const reportFilter = document.getElementById('reportFilter');
+
+                const reportInfo = {};
+                data
+                    .filter(item =>
+                        item.quarter !== 'Engagement Activity' &&
+                        item.quarter !== 'Matched Startup' &&
+                        item.startup &&
+                        item.startup.trim() !== ''
+                    )
+                    .forEach(item => {
+                        if (selectedPartner === 'all' || item.partner === selectedPartner) {
+                            if (!reportInfo[item.quarter]) {
+                                reportInfo[item.quarter] = {
+                                    count: 0,
+                                    date: item.date
+                                };
+                            }
+                            reportInfo[item.quarter].count++;
+                        }
+                    });
+
+                const relevantReports = Object.entries(reportInfo)
+                    .filter(([_, info]) => info.count > 0)
+                    .sort((a, b) => {
+                        const dateA = parseDate(a[1].date);
+                        const dateB = parseDate(b[1].date);
+                        return dateB - dateA;
+                    })
+                    .map(([report]) => report);
+
+                reportFilter.innerHTML = '<option value="all">All Reports</option>';
+                relevantReports.forEach(report => {
+                    const option = document.createElement('option');
+                    option.value = report;
+                    option.textContent = report;
+                    reportFilter.appendChild(option);
+                });
+            }
+
+            // Helper function to parse dates in various formats
+            function parseDate(dateString) {
+                if (!dateString) return new Date(0);
+
+                // First, try the standard Date parsing
+                let parsedDate = new Date(dateString);
+
+                // Check if valid date was parsed
+                if (!isNaN(parsedDate.getTime())) {
+                    return parsedDate;
+                }
+
+                // If standard parsing failed, try to handle DD.MM.YYYY format
+                const dateParts = dateString.split('.');
+                if (dateParts.length === 3) {
+                    // DD.MM.YYYY format - rearrange to YYYY-MM-DD for parsing
+                    return new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
+                }
+
+                // If parsing still fails, return earliest possible date
+                return new Date(0);
+            }
+
+            // Make sure the same sorting is applied in the updateReportsTable function
+            function updateReportsTable(filteredData) {
+                const reportsTableBody = document.getElementById('reportsTableBody');
+                reportsTableBody.innerHTML = '';
+
+                const selectedPartner = document.getElementById('partnerFilter').value;
+
+                const reportSummary = {};
+                data
+                    .filter(item =>
+                        item.quarter !== 'Engagement Activity' &&
+                        item.quarter !== 'Matched Startup' &&
+                        (selectedPartner === 'all' || item.partner === selectedPartner)
+                    )
+                    .forEach(item => {
+                        const key = `${item.quarter}-${item.partner}-${item.date}`;
+                        if (!reportSummary[key]) {
+                            reportSummary[key] = {
+                                report: item.quarter,
+                                partner: item.partner,
+                                date: item.date,
+                                count: 0,
+                                comments: '',
+                                reportLink: item.reportLink || ''
+                            };
+                        }
+
+                        if (item.startup && item.startup.trim() !== '') {
+                            reportSummary[key].count++;
+                        }
+
+                        if ((!item.startup || item.startup.trim() === '' || item.engaged?.toLowerCase() === 'no')
+                            && item.comments && item.comments.trim() !== '') {
+                            reportSummary[key].comments = item.comments;
+                        }
+
+                        // Keep the reportLink if it exists
+                        if (item.reportLink && !reportSummary[key].reportLink) {
+                            reportSummary[key].reportLink = item.reportLink;
+                        }
+                    });
+
+                // Sort by date - newest first
+                Object.values(reportSummary)
+                    .sort((a, b) => {
+                        // Use our custom date parser
+                        const dateA = parseDate(a.date);
+                        const dateB = parseDate(b.date);
+                        // Sort newest to oldest
+                        return dateB - dateA;
+                    })
+                    .forEach(report => {
+                        const row = reportsTableBody.insertRow();
+                        row.insertCell(0).textContent = report.report;
+                        row.insertCell(1).textContent = report.partner;
+                        row.insertCell(2).textContent = report.date;
+                        row.insertCell(3).textContent = report.count === 0 ? "-" : report.count;
+
+                        const descCell = row.insertCell(4);
+                        descCell.textContent = report.comments;
+                        descCell.className = 'description';
+
+                        const linkCell = row.insertCell(5);
+                        if (report.reportLink && report.reportLink.trim() !== '') {
+                            const reportLink = document.createElement('a');
+                            reportLink.href = report.reportLink;
+                            reportLink.textContent = 'View Report';
+                            reportLink.target = '_blank';
+                            reportLink.className = 'contact-link';
+                            linkCell.appendChild(reportLink);
+                        } else {
+                            linkCell.textContent = '-';
+                        }
+                    });
+            }
+
+            document.getElementById('partnerFilter').addEventListener('change', () => {
+                updateReportFilter(); // Update report filter first
+                updateDashboard(); // Then update dashboard
+            });
+
+            document.getElementById('reportFilter').addEventListener('change', updateDashboard);
+
+            function createPieChart(canvasId, data, labels, title, options) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                return new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: chartColors
+                        }]
+                    },
+                    options: {
+                        ...options,
+                        plugins: {
+                            ...options.plugins,
+                            title: {
+                                ...options.plugins.title,
+                                text: title
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateCharts(filteredData) {
+                // Update category chart
+                const categories = {};
+                filteredData
+                    .filter(item => item.startup && item.startup.trim() !== '')
+                    .forEach(item => {
+                        categories[item.category] = (categories[item.category] || 0) + 1;
+                    });
+
+                const processedCategories = processChartData(categories, 7);
+                categoryChart.data.labels = Object.keys(processedCategories);
+                categoryChart.data.datasets[0].data = Object.values(processedCategories);
+                categoryChart.update();
+
+                // Update stage chart
+                const stages = {};
+                filteredData
+                    .filter(item => item.startup && item.startup.trim() !== '')
+                    .forEach(item => {
+                        stages[item.stage] = (stages[item.stage] || 0) + 1;
+                    });
+
+                const processedStages = processChartData(stages, 5);
+                stageChart.data.labels = Object.keys(processedStages);
+                stageChart.data.datasets[0].data = Object.values(processedStages);
+                stageChart.update();
+
+                // Update country chart
+                const countries = {};
+                filteredData
+                    .filter(item => item.startup && item.startup.trim() !== '')
+                    .forEach(item => {
+                        countries[item.country] = (countries[item.country] || 0) + 1;
+                    });
+
+                const processedCountries = processChartData(countries, 5);
+                countryChart.data.labels = Object.keys(processedCountries);
+                countryChart.data.datasets[0].data = Object.values(processedCountries);
+                countryChart.update();
+            }
+
+            function updateReportsTable(filteredData) {
+                const reportsTableBody = document.getElementById('reportsTableBody');
+                reportsTableBody.innerHTML = '';
+
+                const selectedPartner = document.getElementById('partnerFilter').value;
+
+                const reportSummary = {};
+                data
+                    .filter(item =>
+                        item.quarter !== 'Engagement Activity' &&
+                        item.quarter !== 'Matched Startup' &&
+                        (selectedPartner === 'all' || item.partner === selectedPartner)
+                    )
+                    .forEach(item => {
+                        const key = `${item.quarter}-${item.partner}-${item.date}`;
+                        if (!reportSummary[key]) {
+                            reportSummary[key] = {
+                                report: item.quarter,
+                                partner: item.partner,
+                                date: item.date,
+                                count: 0,
+                                comments: '',
+                                reportLink: item.reportLink || ''
+                            };
+                        }
+
+                        if (item.startup && item.startup.trim() !== '') {
+                            reportSummary[key].count++;
+                        }
+
+                        if ((!item.startup || item.startup.trim() === '' || item.engaged?.toLowerCase() === 'no')
+                            && item.comments && item.comments.trim() !== '') {
+                            reportSummary[key].comments = item.comments;
+                        }
+
+                        if (item.reportLink && !reportSummary[key].reportLink) {
+                            reportSummary[key].reportLink = item.reportLink;
+                        }
+                    });
+
+                Object.values(reportSummary)
+                    .sort((a, b) => {
+                        // Use our custom date parser
+                        const dateA = parseDate(a.date);
+                        const dateB = parseDate(b.date);
+                        // Sort newest to oldest
+                        return dateB - dateA;
+                    })
+                    .forEach(report => {
+                        const row = reportsTableBody.insertRow();
+                        row.insertCell(0).textContent = report.report;
+                        row.insertCell(1).textContent = report.partner;
+                        row.insertCell(2).textContent = report.date;
+                        row.insertCell(3).textContent = report.count === 0 ? "-" : report.count;
+
+                        const descCell = row.insertCell(4);
+                        descCell.textContent = report.comments;
+                        descCell.className = 'description';
+
+                        const linkCell = row.insertCell(5);
+                        if (report.reportLink && report.reportLink.trim() !== '') {
+                            const reportLink = document.createElement('a');
+                            reportLink.href = report.reportLink;
+                            reportLink.textContent = 'View Report';
+                            reportLink.target = '_blank';
+                            reportLink.className = 'contact-link';
+                            linkCell.appendChild(reportLink);
+                        } else {
+                            linkCell.textContent = '-';
+                        }
+                    });
+            }
+            function updateActivitiesTable() {
+                const tableBody = document.getElementById('activitiesTableBody');
+                tableBody.innerHTML = '';
+
+                const selectedPartner = document.getElementById('partnerFilter').value;
+
+                const activitiesData = data
+                    .filter(item =>
+                        item.quarter === 'Engagement Activity' &&
+                        (selectedPartner === 'all' || item.partner === selectedPartner)
+                    )
+                    .sort((a, b) => {
+                        // Use our custom date parser
+                        const dateA = parseDate(a.date);
+                        const dateB = parseDate(b.date);
+                        // Sort newest to oldest
+                        return dateB - dateA;
+                    });
+
+                activitiesData.forEach(item => {
+                    const row = tableBody.insertRow();
+                    const activityCell = row.insertCell(0);
+                    const partnerCell = row.insertCell(1);
+                    const dateCell = row.insertCell(2);
+                    const descCell = row.insertCell(3);
+
+                    activityCell.textContent = item.engagement;
+                    partnerCell.textContent = item.partner;
+                    dateCell.textContent = item.date;
+                    descCell.textContent = item.comments || '';
+                    descCell.className = 'description';
+                });
+
+                document.getElementById('totalActivities').textContent = activitiesData.length;
+            }
+
+            function showReportsModal() {
+                document.getElementById('reportsModal').style.display = 'flex';
+            }
+
+            function hideReportsModal() {
+                document.getElementById('reportsModal').style.display = 'none';
+            }
+
+            function showActivitiesModal() {
+                document.getElementById('activitiesModal').style.display = 'flex';
+                updateActivitiesTable();
+            }
+
+            function hideActivitiesModal() {
+                document.getElementById('activitiesModal').style.display = 'none';
+            }
+
+            // Close modal when clicking outside
+            window.onclick = function (event) {
+                const reportsModal = document.getElementById('reportsModal');
+                const activitiesModal = document.getElementById('activitiesModal');
+                if (event.target === reportsModal) {
+                    hideReportsModal();
+                }
+                if (event.target === activitiesModal) {
+                    hideActivitiesModal();
+                }
+            }
+        </script>
 </body>
+
 </html>
