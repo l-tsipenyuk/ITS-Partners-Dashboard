@@ -392,7 +392,7 @@
     <div class="metrics">
         <div class="metric-card non-clickable">
             <div class="metric-value" id="totalStartups">0</div>
-            <div class="metric-label">Total Startups</div>
+            <div class="metric-label">Total Companies</div>
         </div>
         <!-- <div class="metric-card clickable" onclick="showEngagedStartupsModal()">
             <div class="metric-value" id="engagedStartups">0</div>
@@ -539,9 +539,9 @@
                     }
                 };
 
-                categoryChart = createPieChart('categoryChart', [], [], 'Startups by Category', chartOptions);
-                stageChart = createPieChart('stageChart', [], [], 'Startups by Funding Stage', chartOptions);
-                countryChart = createPieChart('countryChart', [], [], 'Startups by Country', chartOptions);
+                categoryChart = createPieChart('categoryChart', [], [], 'Companies by Category', chartOptions);
+                stageChart = createPieChart('stageChart', [], [], 'Companies by Funding Stage', chartOptions);
+                countryChart = createPieChart('countryChart', [], [], 'Companies by Country', chartOptions);
             }
 
             document.getElementById('csvFile').addEventListener('change', function (e) {
