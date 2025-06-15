@@ -1,0 +1,293 @@
+import wixWindow from 'wix-window';
+import wixLocation from 'wix-location';
+import { session as sessionStorage } from 'wix-storage';
+import wixData from 'wix-data';
+
+$w.onReady(function () {
+    console.log("Page ready, setting up HTML iframe listener");
+    
+    // Make sure your HTML element ID matches this selector
+    if ($w('#html1')) {
+        // Listen for messages from the iframe
+        $w('#html1').onMessage((event) => {
+            console.log("Message received from iframe:", event.data);
+            
+            // Check if we're being asked for collection data
+            if (event.data.type === "getCollectionData") {
+                console.log("Attempting to fetch collection by ID: Import401");
+                fetchCollectionDataById("Import401");
+            }
+            // Handle collection update request - for updateWixCollection message type
+            else if (event.data.type === "updateWixCollection") {
+                console.log("Received request to update collection:", event.data);
+                updateWixCollection("Import401", event.data.items);
+            }
+            // Handle collection update request - for updateItems message type (backward compatibility)
+            else if (event.data.type === "updateItems") {
+                console.log("Received request to update items (old format):", event.data);
+                updateWixItems("Import401", event.data.updates);
+            }
+        });
+    } else {
+        console.error("HTML element not found. Check the ID in your code.");
+    }
+});
+
+// Debug function to display all column names in the first item
+function logFieldNames(collectionId) {
+    wixData.query(collectionId)
+        .limit(1)
+        .find()
+        .then((results) => {
+            if (results.items.length > 0) {
+                console.log("Field names in collection:", Object.keys(results.items[0]));
+            } else {
+                console.log("No items found in collection");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching field names:", error);
+        });
+}
+
+// Function to fetch data using the collection ID
+function fetchCollectionDataById(collectionId) {
+    // Log all field names for debugging
+    logFieldNames(collectionId);
+    
+    wixData.query(collectionId)
+        .limit(1000)
+        .find()
+        .then((results) => {
+            console.log("Data retrieved from collection:", results.items.length, "items");
+            
+            if ($w('#html1')) {
+                // Send the data back to the iframe
+                $w('#html1').postMessage({
+                    type: "wixCollectionData",
+                    collection: "PartnerData", // CHANGED: Fixed collection name to match frontend
+                    items: results.items
+                });
+            }
+        })
+        .catch((error) => {
+            console.error(`Error fetching collection with ID ${collectionId}:`, error);
+            
+            // Send error back to iframe
+            if ($w('#html1')) {
+                $w('#html1').postMessage({
+                    type: "wixError",
+                    error: error.message || `Unknown error fetching collection with ID ${collectionId}`
+                });
+            }
+        });
+}
+
+function findFieldName(obj, fieldNameLowerCase) {
+    const keys = Object.keys(obj);
+    for (const key of keys) {
+        if (key.toLowerCase() === fieldNameLowerCase.toLowerCase()) {
+            return key;
+        }
+    }
+    return null;
+}
+
+// FIXED: Updated updateWixCollection function
+function updateWixCollection(collectionId, items) {
+    console.log(`Updating ${items.length} items in collection ${collectionId}`);
+    
+    // Process each item update
+    const updatePromises = items.map(item => {
+        console.log("Preparing to update item with ID:", item._id);
+        
+        // First get the existing item to preserve all data
+        return wixData.get(collectionId, item._id)
+            .then(existingItem => {
+                console.log("Retrieved existing item:", existingItem);
+                
+                // Find the actual field names with correct casing
+                const engagementStatusField = findFieldName(existingItem, "engagementstatus") || "EngagementStatus";
+                const engagedField = findFieldName(existingItem, "engaged") || "Engaged";
+                const partnerNotesField = findFieldName(existingItem, "partnernotes") || "PartnerNotes";
+                
+                console.log("Field names found:", {
+                    engagementStatusField,
+                    engagedField,
+                    partnerNotesField
+                });
+                
+                // Create an updated item by merging the existing item with our changes
+                const updatedItem = { ...existingItem };
+                
+                // Handle EngagementStatus field - don't save "Add comment"
+                if (item.EngagementStatus !== undefined && item.EngagementStatus !== "Add comment") {
+                    updatedItem[engagementStatusField] = item.EngagementStatus;
+                    console.log(`Setting ${engagementStatusField} to '${item.EngagementStatus}'`);
+                }
+                
+                // Handle Engaged field - use exact same field name from existing item
+                if (item.Engaged !== undefined) {
+                    updatedItem[engagedField] = item.Engaged;
+                    console.log(`Setting ${engagedField} to '${item.Engaged}'`);
+                }
+                
+                // Handle PartnerNotes field
+                if (item.PartnerNotes !== undefined) {
+                    updatedItem[partnerNotesField] = item.PartnerNotes;
+                    console.log(`Setting ${partnerNotesField} to '${item.PartnerNotes}'`);
+                }
+                
+                console.log("Final item for update:", updatedItem);
+                
+                // Now update with the merged data
+                return wixData.update(collectionId, updatedItem);
+            })
+            .then(updatedItem => {
+                console.log("Item updated successfully:", updatedItem);
+                return { success: true, item: updatedItem };
+            })
+            .catch(error => {
+                console.error("Error updating item:", error);
+                return { success: false, error: error.message };
+            });
+    });
+    
+    // Wait for all updates to complete
+    Promise.all(updatePromises)
+        .then(results => {
+            const allSuccessful = results.every(result => result.success);
+            
+            if ($w('#html1')) {
+                // Send result back to iframe
+                $w('#html1').postMessage({
+                    type: "wixUpdateResult",
+                    success: allSuccessful,
+                    results: results
+                });
+                
+                // ADDED: Force a refresh of the data after update
+                if (allSuccessful) {
+                    console.log("Update successful, refreshing data...");
+                    setTimeout(() => fetchCollectionDataById(collectionId), 500);
+                }
+            }
+            
+            console.log("Update complete, results:", results);
+        })
+        .catch(error => {
+            console.error("Error in update operation:", error);
+            
+            if ($w('#html1')) {
+                $w('#html1').postMessage({
+                    type: "wixUpdateResult",
+                    success: false,
+                    error: error.message
+                });
+            }
+        });
+}
+
+// Add this function to your Velo code
+function updateWixItems(collectionId, updates) {
+    console.log(`Updating ${updates.length} items in collection ${collectionId} using old format`);
+    
+    // Process each update
+    const updatePromises = updates.map(update => {
+        const id = update.id || update._id;
+        console.log("Original update object for ID:", id, update);
+        
+        // First get the existing item to preserve all data
+        return wixData.get(collectionId, id)
+            .then(existingItem => {
+                console.log("Retrieved existing item:", existingItem);
+                
+                // Find the actual field names with correct casing
+                const engagementStatusField = findFieldName(existingItem, "engagementstatus") || "EngagementStatus";
+                const engagedField = findFieldName(existingItem, "engaged") || "Engaged";
+                const partnerNotesField = findFieldName(existingItem, "partnernotes") || "PartnerNotes";
+                
+                console.log("Field names found:", {
+                    engagementStatusField,
+                    engagedField,
+                    partnerNotesField
+                });
+                
+                // Create an updated item by merging the existing item with our changes
+                const updatedItem = { ...existingItem };
+                
+                // Extract changes
+                const changes = update.changes || update;
+                
+                // Apply only the fields we want to change
+                if (changes.engagementStatus || changes.EngagementStatus) {
+                    const status = changes.engagementStatus || changes.EngagementStatus;
+                    // Don't save "Add comment" as a status
+                    if (status !== "Add comment") {
+                        updatedItem[engagementStatusField] = status;
+                    }
+                }
+                
+                if (changes.engaged !== undefined || changes.Engaged !== undefined) {
+                    updatedItem[engagedField] = changes.engaged || changes.Engaged;
+                } else if (changes.engagementStatus || changes.EngagementStatus) {
+                    // Set Engaged based on EngagementStatus
+                    const status = changes.engagementStatus || changes.EngagementStatus;
+                    if (status !== "Add comment") {
+                        updatedItem[engagedField] = (status !== 'No') ? 'Yes' : 'No';
+                    }
+                }
+                
+                // Handle comments/PartnerNotes
+                if (changes.comments || changes.Comments || changes.PartnerNotes) {
+                    updatedItem[partnerNotesField] = changes.comments || changes.Comments || changes.PartnerNotes || '';
+                }
+                
+                console.log("Merged item for update:", updatedItem);
+                
+                // Now update with the merged data
+                return wixData.update(collectionId, updatedItem);
+            })
+            .then(updatedItem => {
+                console.log("Item updated successfully:", updatedItem);
+                return {success: true, item: updatedItem};
+            })
+            .catch(error => {
+                console.error("Error updating item:", error);
+                return {success: false, error: error.message};
+            });
+    });
+    
+    // Wait for all updates to complete
+    Promise.all(updatePromises)
+        .then(results => {
+            const allSuccessful = results.every(result => result.success);
+            
+            if ($w('#html1')) {
+                $w('#html1').postMessage({
+                    type: "wixUpdateResult",
+                    success: allSuccessful,
+                    results: results
+                });
+                
+                // Force a refresh of the data after update
+                if (allSuccessful) {
+                    console.log("Update successful, refreshing data...");
+                    setTimeout(() => fetchCollectionDataById(collectionId), 500);
+                }
+            }
+            
+            console.log("Update complete, results:", results);
+        })
+        .catch(error => {
+            console.error("Error in update operation:", error);
+            
+            if ($w('#html1')) {
+                $w('#html1').postMessage({
+                    type: "wixUpdateResult",
+                    success: false,
+                    error: error.message
+                });
+            }
+        });
+}
