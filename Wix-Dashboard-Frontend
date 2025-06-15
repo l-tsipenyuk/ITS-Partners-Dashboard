@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ITS Partners Analytics Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <style>
+        :root {
+            --primary-green: #00A651;
+            --secondary-yellow: #FFD100;
+            --accent-blue: #00A9E0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0px;
+            padding: 0px;
+            background-color: #f5f5f5;
+            box-sizing: border-box;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+            max-width: 100%;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            min-width: 150px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            margin-top: 5px;
+            padding: 5px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-card.clickable {
+            cursor: pointer;
+        }
+
+        .metric-card.non-clickable {
+            cursor: default;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+
+        .metric-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 100;
+            box-sizing: border-box;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 280px;
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        canvas {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        .chart-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary-green);
+        }
+
+        .startup-table,
+        .reports-table,
+        .activities-table {
+            height: 250px;
+            overflow-y: auto;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .activities-table td.description {
+            max-width: 400px;
+            white-space: normal;
+            word-wrap: break-word;
+            padding: 12px 8px;
+        }
+
+        .activities-table td {
+            padding: 12px 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            width: 1000px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        #engagedStartupsModal th:nth-child(1),
+        /* Startup */
+        #engagedStartupsModal td:nth-child(1) {
+            width: 15%;
+            min-width: 120px;
+        }
+
+        #engagedStartupsModal th:nth-child(2),
+        #engagedStartupsModal td:nth-child(2) {
+            width: 10%;
+            min-width: 80px;
+        }
+
+        #engagedStartupsModal th:nth-child(3),
+        #engagedStartupsModal td:nth-child(3) {
+            width: 12%;
+            min-width: 100px;
+        }
+
+        #engagedStartupsModal th:nth-child(4),
+        #engagedStartupsModal td:nth-child(4) {
+            width: 12%;
+            min-width: 100px;
+        }
+
+        #engagedStartupsModal th:nth-child(5),
+        #engagedStartupsModal td:nth-child(5) {
+            width: 15%;
+            min-width: 120px;
+        }
+
+        #engagedStartupsModal th:last-child,
+        #engagedStartupsModal td:last-child {
+            width: 36%;
+            min-width: 200px;
+        }
+
+        #engagedStartupsModal table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        #engagedStartupsModal td,
+        #engagedStartupsModal th {
+            padding: 12px 8px;
+            vertical-align: top;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        #engagedStartupsModal .modal-content {
+            overflow-x: hidden;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .reports-table td.description {
+            max-width: 300px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        /* Style for clickable links */
+        .contact-link {
+            color: #00A651;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .modal table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .modal th,
+        .modal td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .modal td.description {
+            max-width: 300px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        .contacted-row {
+            background-color: #e6ffe6;
+        }
+
+        .contacted-row:hover {
+            background-color: #ccffcc;
+        }
+
+        .loading {
+            display: block;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        /* New styles for the Explore More button */
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .explore-more-btn {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .explore-more-btn:hover {
+            background-color: #007B3C;
+        }
+
+        .engagement-dropdown {
+            width: 100%;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .save-btn {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .save-btn:hover {
+            background-color: #007B3C;
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: calc(80vh - 130px);
+            overflow-y: auto;
+        }
+
+        .modal-header .close {
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .engaged-row {
+            background-color: #e6ffe6;
+        }
+
+        .engaged-row:hover {
+            background-color: #ccffcc;
+        }
+
+        .pagination-controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pagination-button {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .pagination-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            margin: 0 10px;
+        }
+
+        .modal-footer {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 15px 20px;
+            border-top: 1px solid #ddd;
+            text-align: right;
+        }
+
+        .chart-js-legend ul li {
+            font-size: 10px !important;
+            line-height: 1.2 !important;
+            padding: 2px !important;
+        }
+
+        .not-relevant-row {
+            background-color: #ffe6e6;
+            /* Light red background */
+        }
+
+        .not-relevant-row:hover {
+            background-color: #ffcccc;
+            /* Slightly darker red on hover */
+        }
+
+        .comment-button {
+            background-color: transparent;
+            border: none;
+            color: var(--primary-green);
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .comment-button:hover {
+            background-color: rgba(0, 166, 81, 0.1);
+        }
+
+        .comment-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-top: 8px;
+            display: none;
+            font-family: Arial, sans-serif;
+            min-height: 60px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s;
+            resize: vertical;
+        }
+
+        .comment-input:focus {
+            border-color: var(--primary-green);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 166, 81, 0.2);
+        }
+
+        .has-comment {
+            position: relative;
+        }
+
+        .has-comment:after {
+            content: "✓";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-card {
+                padding: 10px;
+            }
+
+            .chart-container {
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading" class="loading">Loading...</div>
+    <div class="dashboard-container">
+        <div class="header-section">
+        </div>
+
+        <div class="filters">
+            <div>
+                <label for="reportFilter">Report:</label>
+                <select id="reportFilter">
+                    <option value="all">All Reports</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-card non-clickable">
+                <div class="metric-value" id="totalStartups">0</div>
+                <div class="metric-label">Total Startups</div>
+            </div>
+            <div class="metric-card clickable" onclick="showEngagedStartupsModal()">
+                <div class="metric-value" id="engagedStartups">0</div>
+                <div class="metric-label">Engaged Startups (Click for details)</div>
+            </div>
+            <div class="metric-card clickable" onclick="showActivitiesModal()">
+                <div class="metric-value" id="totalActivities">0</div>
+                <div class="metric-label">Engagement Activities (Click for details)</div>
+            </div>
+            <div class="metric-card clickable" onclick="showReportsModal()">
+                <div class="metric-value" id="totalReports">0</div>
+                <div class="metric-label">Total Reports (Click for details)</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="table-header">
+                    <h3 style="margin: 0;">Startups Overview</h3>
+                    <button class="explore-more-btn" onclick="showExploreMoreModal()">Explore More</button>
+                </div>
+                <div class="startup-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Startup</th>
+                                <th>Category</th>
+                                <th>Funding Stage</th>
+                                <th>Contact</th>
+                            </tr>
+                        </thead>
+                        <tbody id="startupTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="stageChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="countryChart"></canvas>
+            </div>
+
+        </div>
+
+        <!-- Your modal popups -->
+        <div id="reportsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Reports Details</h2>
+                    <span class="close" onclick="hideReportsModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Report</th>
+                                <th>Date</th>
+                                <th>Total Startups</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="activitiesModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Engagement Activities</h2>
+                    <span class="close" onclick="hideActivitiesModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <table class="activities-table">
+                        <thead>
+                            <tr>
+                                <th>Activity</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activitiesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="exploreMoreModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Explore Startups</h2>
+                    <span class="close" onclick="hideExploreMoreModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <table id="exploreMoreTable">
+                        <thead>
+                            <tr>
+                                <th>Startup</th>
+                                <th>Category</th>
+                                <th>Funding Stage</th>
+                                <th>Contact</th>
+                                <th>Engagement Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exploreMoreTableBody">
+
+                        </tbody>
+                    </table>
+                    <div class="pagination-controls">
+                        <button id="prevPageBtn" class="pagination-button" disabled>Previous</button>
+                        <span class="pagination-info">Page <span id="currentPage">1</span> of <span
+                                id="totalPages">1</span></span>
+                        <button id="nextPageBtn" class="pagination-button">Next</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="save-btn" onclick="saveEngagementChanges()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="engagedStartupsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Engaged Startups Details</h2>
+                    <span class="close" onclick="hideEngagedStartupsModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Startup</th>
+                                <th>Category</th>
+                                <th>Funding Stage</th>
+                                <th>Contact</th>
+                                <th>Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="engagedStartupsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 6;
+        let totalFilteredStartups = [];
+
+        const PARTNER = "E.ON";
+        let data = [];
+        let categoryChart, stageChart, countryChart;
+
+        const chartColors = [
+            '#00A651', // Primary green
+            '#FFD100', // Yellow
+            '#00A9E0', // Blue
+            '#007B3C', // Darker green
+            '#FFE666', // Lighter yellow
+            '#66D1FF', // Lighter blue
+            '#004D25', // Darkest green
+            '#B39400', // Darker yellow
+            '#007AA3'  // Darker blue
+        ];
+
+        function fetchWixData() {
+            console.log("Requesting all data from Wix collection for debugging...");
+
+            try {
+
+                window.parent.postMessage({
+                    type: "getCollectionData",
+                    collection: "PartnerData"
+                }, "*");
+
+                console.log("Message sent to parent window");
+            } catch (error) {
+                console.error('Error sending message to Wix:', error);
+                document.getElementById('loading').style.display = 'none';
+                alert('Error: Cannot connect to Wix. Please check console for details.');
+            }
+        }
+
+        window.addEventListener('message', function (event) {
+            console.log("Message received:", event.data);
+
+            if (event.data && event.data.type === 'wixCollectionData') {
+                console.log("Collection data received:", event.data.items.length, "items");
+                try {
+                    // Find E.ON entries for debugging
+                    const eonEntries = event.data.items.filter(item => {
+                        return (item.Partner === "E.ON" || item.partner === "E.ON");
+                    });
+
+                    console.log("E.ON entries found:", eonEntries.length);
+                    if (eonEntries.length > 0) {
+                        console.log("Sample E.ON entry:", eonEntries[0]);
+                        console.log("All field names:", Object.keys(eonEntries[0]));
+                    } else {
+                        console.log("No E.ON entries found. Checking all unique partner values:");
+                        const allPartners = new Set();
+                        event.data.items.forEach(item => {
+
+                            if (item.Partner) allPartners.add(item.Partner);
+                            if (item.partner) allPartners.add(item.partner);
+                        });
+                        console.log("All partner values:", Array.from(allPartners));
+
+
+                        if (event.data.items.length > 0) {
+                            console.log("Sample item from collection:", event.data.items[0]);
+                            console.log("Field names in sample item:", Object.keys(event.data.items[0]));
+                        }
+                    }
+
+                    data = event.data.items
+                        .filter(item => item.Partner === "E.ON" || item.partner === "E.ON")
+                        .map(item => {
+
+                            return {
+                                partner: item.Partner || item.partner || '',
+                                quarter: item.Report || item.report || '',
+                                date: item.Date || item.date || '',
+                                startup: (item.Startup || item.startup || '').trim(),
+                                category: item.Category || item.category || '',
+                                stage: item.Stage || item.stage || '',
+                                country: item.Country || item.country || '',
+                                contact: item.Contact || item.contact || '',
+                                engaged: item.Engaged || item.engaged || '',
+                                link: item.Link || item.link || '',
+                                engagement: item.Engagement || item.engagement || '',
+                                engagementStatus: item.EngagementStatus || item.engagementStatus || 'No',
+                                comments: item.Comments || item.comments || '',
+                                PartnerNotes: item.PartnerNotes || item.partnernotes || '',
+                                partnernotes: item.PartnerNotes || item.partnernotes || '',
+                                _id: item._id
+                            };
+                        });
+
+                    updateFilters();
+                    initCharts();
+                    updateDashboard();
+
+                    document.getElementById('loading').style.display = 'none';
+                } catch (error) {
+                    console.error('Error processing Wix data:', error);
+                    alert('Error processing the data. Please check the console for details.');
+                    document.getElementById('loading').style.display = 'none';
+                }
+            } else if (event.data && event.data.type === 'wixError') {
+                console.error('Error from Wix:', event.data.error);
+                document.getElementById('loading').style.display = 'none';
+                alert('Error retrieving data: ' + event.data.error);
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM Content Loaded");
+
+            initCharts();
+            setupPaginationListeners();
+            fetchWixData();
+        });
+
+        function initCharts() {
+            if (categoryChart) categoryChart.destroy();
+            if (stageChart) stageChart.destroy();
+            if (countryChart) countryChart.destroy();
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            top: 5,
+                            bottom: 5
+                        }
+                    },
+                    legend: {
+                        position: 'right',
+                        align: 'start',
+                        labels: {
+                            boxWidth: 8,
+                            padding: 4,
+                            font: {
+                                size: 9
+                            }
+                        }
+                    }
+                }
+            };
+
+            categoryChart = createPieChart('categoryChart', [], [], 'Startups by Category', chartOptions);
+            stageChart = createPieChart('stageChart', [], [], 'Startups by Funding Stage', chartOptions);
+            countryChart = createPieChart('countryChart', [], [], 'Startups by Country', chartOptions);
+        }
+
+        function processChartData(data, minCategories) {
+
+            const sortedEntries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+
+            const mainCategories = {};
+            let otherSum = 0;
+
+            sortedEntries.forEach(([key, value], index) => {
+                if (index < minCategories) {
+
+                    mainCategories[key] = value;
+                } else {
+                    otherSum += value;
+                }
+            });
+
+            if (otherSum > 0) {
+                mainCategories['Other'] = otherSum;
+            }
+
+            return mainCategories;
+        }
+
+        function showEngagedStartupsModal() {
+            document.getElementById('engagedStartupsModal').style.display = 'flex';
+            updateEngagedStartupsTable();
+        }
+
+        function hideEngagedStartupsModal() {
+            document.getElementById('engagedStartupsModal').style.display = 'none';
+        }
+
+        function updateEngagedStartupsTable() {
+            const tableBody = document.getElementById('engagedStartupsTableBody');
+            tableBody.innerHTML = '';
+
+            const engagedStartups = data.filter(item =>
+                item.startup &&
+                item.startup.trim() !== '' &&
+                item.engaged?.toLowerCase() === 'yes'
+            );
+
+
+            const sortedStartups = engagedStartups.sort((a, b) => {
+                // Sort by engagement status (Contacted first)
+                const aContacted = a.engagement === 'Contacted';
+                const bContacted = b.engagement === 'Contacted';
+
+                if (aContacted && !bContacted) return -1;
+                if (!aContacted && bContacted) return 1;
+
+                if (a.date && b.date) {
+                    return new Date(b.date) - new Date(a.date);
+                }
+                return 0;
+            });
+
+            sortedStartups.forEach(item => {
+                const row = tableBody.insertRow();
+
+                if (item.engagement === 'Contacted') {
+                    row.classList.add('contacted-row');
+                }
+
+                const nameCell = row.insertCell(0);
+                const nameLink = document.createElement('a');
+                if (item.link && item.link.trim()) {
+                    nameLink.href = item.link;
+                } else {
+                    nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
+                }
+                nameLink.textContent = item.startup;
+                nameLink.className = 'startup-link';
+                nameLink.target = '_blank';
+                nameCell.appendChild(nameLink);
+
+                row.insertCell(1).textContent = item.category;
+                row.insertCell(2).textContent = item.stage;
+
+                const contactCell = row.insertCell(3);
+                if (item.contact && item.contact.toLowerCase().startsWith('http')) {
+                    const contactLink = document.createElement('a');
+                    contactLink.href = item.contact;
+                    contactLink.textContent = item.contact;
+                    contactLink.className = 'contact-link';
+                    contactLink.target = '_blank';
+                    contactCell.appendChild(contactLink);
+                } else {
+                    contactCell.textContent = item.contact;
+                }
+
+                row.insertCell(4).textContent = item.comments || '';
+            });
+        }
+
+        function updateDashboard() {
+            const reportFilter = document.getElementById('reportFilter').value;
+
+            const activitiesCount = data.filter(item =>
+                item.quarter === 'Engagement Activity'
+            ).length;
+            document.getElementById('totalActivities').textContent = activitiesCount;
+
+            const engagedStartups = data.filter(item =>
+                item.startup &&
+                item.startup.trim() !== '' &&
+                item.engaged?.toLowerCase() === 'yes'
+            );
+            document.getElementById('engagedStartups').textContent = engagedStartups.length;
+
+            const filteredData = data.filter(item => {
+                const isNotMatched = item.quarter !== 'Matched Startup';
+                const isNotActivity = item.quarter !== 'Engagement Activity';
+                const hasStartup = item.startup && item.startup.trim() !== '';
+                return isNotMatched && isNotActivity && hasStartup;
+            });
+
+            const reportFilteredData = filteredData.filter(item =>
+                reportFilter === 'all' || item.quarter === reportFilter
+            );
+            document.getElementById('totalStartups').textContent = reportFilteredData.length;
+
+            const uniqueReports = new Set(
+                data
+                    .filter(item =>
+                        item.quarter !== 'Engagement Activity' &&
+                        item.quarter !== 'Matched Startup'
+                    )
+                    .map(item => item.quarter)
+            );
+            document.getElementById('totalReports').textContent = uniqueReports.size;
+
+            updateTable(reportFilteredData);
+            updateCharts(reportFilteredData);
+            updateReportsTable(filteredData);
+        }
+
+        function updateTable(filteredData) {
+            const tableBody = document.getElementById('startupTableBody');
+            tableBody.innerHTML = '';
+
+            const validData = filteredData.filter(item => item.startup && item.startup.trim() !== '');
+
+            validData.forEach(item => {
+                const row = tableBody.insertRow();
+
+                const nameCell = row.insertCell(0);
+                const nameLink = document.createElement('a');
+
+                if (item.link && item.link.trim() !== '') {
+                    nameLink.href = item.link;
+                } else {
+                    nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
+                }
+
+                nameLink.textContent = item.startup;
+                nameLink.className = 'startup-link';
+                nameLink.target = '_blank';
+                nameLink.title = item.link ? item.link : 'Search on Google';
+
+                nameCell.appendChild(nameLink);
+
+                row.insertCell(1).textContent = item.category;
+                row.insertCell(2).textContent = item.stage;
+
+                const contactCell = row.insertCell(3);
+                if (item.contact && item.contact.toLowerCase().startsWith('http')) {
+                    const contactLink = document.createElement('a');
+                    contactLink.href = item.contact;
+                    contactLink.textContent = item.contact;
+                    contactLink.className = 'contact-link';
+                    contactLink.target = '_blank';
+                    contactCell.appendChild(contactLink);
+                } else {
+                    contactCell.textContent = item.contact;
+                }
+            });
+        }
+
+        function updateFilters() {
+            updateReportFilter();
+        }
+
+        function updateReportFilter() {
+            const reportFilter = document.getElementById('reportFilter');
+
+            const reportInfo = {};
+            data
+                .filter(item =>
+                    item.quarter !== 'Engagement Activity' &&
+                    item.quarter !== 'Matched Startup' &&
+                    item.startup &&
+                    item.startup.trim() !== ''
+                )
+                .forEach(item => {
+                    if (!reportInfo[item.quarter]) {
+                        reportInfo[item.quarter] = {
+                            count: 0,
+                            date: item.date
+                        };
+                    }
+                    reportInfo[item.quarter].count++;
+                });
+
+            const relevantReports = Object.entries(reportInfo)
+                .filter(([_, info]) => info.count > 0)
+                .sort((a, b) => {
+                    const dateA = new Date(a[1].date);
+                    const dateB = new Date(b[1].date);
+                    return dateB - dateA;
+                })
+                .map(([report]) => report);
+
+            reportFilter.innerHTML = '<option value="all">All Reports</option>';
+            relevantReports.forEach(report => {
+                const option = document.createElement('option');
+                option.value = report;
+                option.textContent = report;
+                reportFilter.appendChild(option);
+            });
+        }
+
+        document.getElementById('reportFilter').addEventListener('change', updateDashboard);
+
+        function createPieChart(canvasId, data, labels, title, options) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            return new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: chartColors
+                    }]
+                },
+                options: {
+                    ...options,
+                    plugins: {
+                        ...options.plugins,
+                        title: {
+                            ...options.plugins.title,
+                            text: title
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts(filteredData) {
+            const categories = {};
+            filteredData
+                .filter(item => item.startup && item.startup.trim() !== '')
+                .forEach(item => {
+                    categories[item.category] = (categories[item.category] || 0) + 1;
+                });
+
+            const processedCategories = processChartData(categories, 7);
+            categoryChart.data.labels = Object.keys(processedCategories);
+            categoryChart.data.datasets[0].data = Object.values(processedCategories);
+            categoryChart.update();
+
+            const stages = {};
+            filteredData
+                .filter(item => item.startup && item.startup.trim() !== '')
+                .forEach(item => {
+                    stages[item.stage] = (stages[item.stage] || 0) + 1;
+                });
+
+            const processedStages = processChartData(stages, 5);
+            stageChart.data.labels = Object.keys(processedStages);
+            stageChart.data.datasets[0].data = Object.values(processedStages);
+            stageChart.update();
+
+            const countries = {};
+            filteredData
+                .filter(item => item.startup && item.startup.trim() !== '')
+                .forEach(item => {
+                    countries[item.country] = (countries[item.country] || 0) + 1;
+                });
+
+            const processedCountries = processChartData(countries, 5);
+            countryChart.data.labels = Object.keys(processedCountries);
+            countryChart.data.datasets[0].data = Object.values(processedCountries);
+            countryChart.update();
+        }
+
+        function updateReportsTable(filteredData) {
+            const reportsTableBody = document.getElementById('reportsTableBody');
+            reportsTableBody.innerHTML = '';
+
+            const reportSummary = {};
+            data
+                .filter(item =>
+                    item.quarter !== 'Engagement Activity' &&
+                    item.quarter !== 'Matched Startup'
+                )
+                .forEach(item => {
+                    const key = `${item.quarter}-${item.date}`;
+                    if (!reportSummary[key]) {
+                        reportSummary[key] = {
+                            report: item.quarter,
+                            date: item.date,
+                            count: 0,
+                            comments: ''
+                        };
+                    }
+
+                    if (item.startup && item.startup.trim() !== '') {
+                        reportSummary[key].count++;
+                    }
+
+                    if ((!item.startup || item.startup.trim() === '' || item.engaged?.toLowerCase() === 'no')
+                        && item.comments && item.comments.trim() !== '') {
+                        reportSummary[key].comments = item.comments;
+                    }
+                });
+
+            Object.values(reportSummary)
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .forEach(report => {
+                    const row = reportsTableBody.insertRow();
+                    row.insertCell(0).textContent = report.report;
+                    row.insertCell(1).textContent = report.date;
+                    row.insertCell(2).textContent = report.count === 0 ? "-" : report.count;
+                    const descCell = row.insertCell(3);
+                    descCell.textContent = report.comments;
+                    descCell.className = 'description';
+                });
+        }
+
+        let engagementChanges = {};
+
+        function showExploreMoreModal() {
+            currentPage = 1;
+            document.getElementById('exploreMoreModal').style.display = 'flex';
+            updateExploreMoreTable();
+        }
+
+        function hideExploreMoreModal() {
+            document.getElementById('exploreMoreModal').style.display = 'none';
+        }
+
+        function updateExploreMoreTable() {
+            const tableBody = document.getElementById('exploreMoreTableBody');
+            tableBody.innerHTML = '';
+
+            const reportFilter = document.getElementById('reportFilter').value;
+
+            totalFilteredStartups = data.filter(item =>
+                item.startup &&
+                item.startup.trim() !== '' &&
+                item.quarter !== 'Engagement Activity' &&
+                item.quarter !== 'Matched Startup' &&
+                (reportFilter === 'all' || item.quarter === reportFilter)
+            );
+
+            // Calculate pagination
+            const totalPages = Math.ceil(totalFilteredStartups.length / itemsPerPage);
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('currentPage').textContent = currentPage;
+
+            // Enable/disable pagination buttons
+            document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+            document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+
+            // Get the current page items
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentPageItems = totalFilteredStartups.slice(startIndex, endIndex);
+
+            // Define standard dropdown options with "Previous Connection" instead of "Connected directly"
+            const standardOptions = [
+                'Not yet',
+                'Connected through ITS',
+                'Plan to reach out',
+                'Previous Connection',
+                'Not relevant'
+            ];
+
+            // Render the current page items
+            currentPageItems.forEach(item => {
+                const row = tableBody.insertRow();
+                const id = item._id;
+
+                // Check for engaged "Yes" (try both field names)
+                const isEngagedValue =
+                    (item.Engaged === 'Yes') ||
+                    (item.engaged === 'Yes');
+
+                // Get engagement status value (try both field names)
+                const statusValue = item.EngagementStatus || item.engagementStatus || '';
+
+                // Add appropriate row class based on status
+                if (isEngagedValue) {
+                    if (statusValue === 'Connected through ITS' ||
+                        statusValue === 'Previous Connection' ||
+                        statusValue === 'Plan to reach out') {
+                        row.classList.add('engaged-row'); // Green background
+                    } else if (statusValue === 'Not relevant') {
+                        row.classList.add('not-relevant-row'); // Red background
+                    }
+                    // No class added for other statuses
+                }
+
+                // Startup name with link
+                const nameCell = row.insertCell(0);
+                const nameLink = document.createElement('a');
+                if (item.link && item.link.trim()) {
+                    nameLink.href = item.link;
+                } else {
+                    nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
+                }
+                nameLink.textContent = item.startup;
+                nameLink.className = 'startup-link';
+                nameLink.target = '_blank';
+                nameCell.appendChild(nameLink);
+
+                // Category, funding stage, contact
+                row.insertCell(1).textContent = item.category;
+                row.insertCell(2).textContent = item.stage;
+
+                const contactCell = row.insertCell(3);
+                if (item.contact && item.contact.toLowerCase().startsWith('http')) {
+                    const contactLink = document.createElement('a');
+                    contactLink.href = item.contact;
+                    contactLink.textContent = item.contact;
+                    contactLink.className = 'contact-link';
+                    contactLink.target = '_blank';
+                    contactCell.appendChild(contactLink);
+                } else {
+                    contactCell.textContent = item.contact;
+                }
+
+                // Engagement status dropdown
+                const engagementCell = row.insertCell(4);
+                const dropdown = document.createElement('select');
+                dropdown.className = 'engagement-dropdown';
+                dropdown.id = `engagement-${id}`;
+
+                // UPDATED LOGIC FOR SELECTED OPTION:
+                let selectedOptionValue;
+
+                if (isEngagedValue) {
+                    // If engaged is Yes
+                    if (statusValue && statusValue.trim() !== '' && statusValue !== 'No') {
+                        // And status has a value (not "No"), use it
+                        selectedOptionValue = statusValue;
+                    } else {
+                        // If engaged but no status or status is "No", default to "Previous Connection"
+                        selectedOptionValue = 'Previous Connection';
+                    }
+                } else {
+                    // If not engaged, use Not yet
+                    selectedOptionValue = 'Not yet';
+                }
+
+                // Create options array, adding custom value from DB if needed
+                let options = [...standardOptions];
+
+                if (statusValue &&
+                    !standardOptions.includes(statusValue) &&
+                    statusValue !== 'Not yet' &&
+                    statusValue !== 'No') {  // Explicitly exclude "No"
+                    options.splice(1, 0, statusValue);
+                }
+
+                // Add all options to the dropdown
+                options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+
+                    if (option === selectedOptionValue) {
+                        optionElement.selected = true;
+                    }
+
+                    dropdown.appendChild(optionElement);
+                });
+
+                // Add event listener for dropdown change
+                dropdown.addEventListener('change', (e) => handleEngagementChange(e, id));
+                engagementCell.appendChild(dropdown);
+
+                // Add comment input
+                const commentButton = document.createElement('button');
+                commentButton.className = 'comment-button';
+                commentButton.title = 'Add/Edit Comment';
+                commentButton.type = 'button';
+                commentButton.setAttribute('data-id', id);
+                commentButton.appendChild(createPencilIcon());
+                commentButton.addEventListener('click', () => toggleComment(id));
+                engagementCell.appendChild(commentButton);
+                const commentInput = document.createElement('textarea');
+                commentInput.className = 'comment-input';
+                commentInput.id = `comment-${id}`;
+                commentInput.placeholder = 'Enter your comment here...';
+
+                // Partner notes (try both field names)
+                const notes = item.PartnerNotes || item.partnernotes || '';
+
+                if (notes) {
+                    commentInput.value = notes;
+                    commentButton.classList.add('has-comment');  // Add visual indicator for existing comments
+                } else {
+                    commentInput.value = '';
+                }
+
+                commentInput.style.display = 'none';
+
+                commentInput.addEventListener('input', (e) => handleCommentChange(e, id));
+                engagementCell.appendChild(commentInput);
+            });
+        }
+
+
+        // Make sure to reset the pagination when the modal is opened
+        function showExploreMoreModal() {
+            currentPage = 1;
+            document.getElementById('exploreMoreModal').style.display = 'flex';
+            updateExploreMoreTable();
+        }
+
+        function handleCommentChange(event, id) {
+            const commentValue = event.target.value;
+            const commentButton = document.querySelector(`.comment-button[data-id="${id}"]`);
+
+            console.log(`Comment changed for ${id} to: "${commentValue}"`);
+
+            // Track the comment change
+            if (!engagementChanges[id]) {
+                engagementChanges[id] = {};
+            }
+
+            // Always update PartnerNotes with the comment value
+            engagementChanges[id].PartnerNotes = commentValue;
+
+            // Update the visual indicator based on comment content
+            if (commentValue.trim() !== '') {
+                commentButton.classList.add('has-comment');
+
+                // Make sure Engaged is set to Yes if there's a comment
+                engagementChanges[id].Engaged = 'Yes';
+
+                // IMPORTANT: Don't set or change the EngagementStatus here
+                // This ensures the dropdown selection is preserved
+            } else {
+                commentButton.classList.remove('has-comment');
+            }
+
+            console.log(`Updated engagement changes for ${id}:`, engagementChanges[id]);
+        }
+
+        function createPencilIcon() {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 24 24");
+            svg.setAttribute("stroke", "currentColor");
+            svg.setAttribute("fill", "none");
+            svg.setAttribute("stroke-width", "2");
+            svg.setAttribute("stroke-linecap", "round");
+            svg.setAttribute("stroke-linejoin", "round");
+
+            const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path1.setAttribute("d", "M12 20h9");
+            svg.appendChild(path1);
+
+            const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path2.setAttribute("d", "M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z");
+            svg.appendChild(path2);
+
+            return svg;
+        }
+
+        function handleEngagementChange(event, id) {
+            const selectedValue = event.target.value;
+            console.log(`Dropdown changed for ${id} to "${selectedValue}"`);
+
+            // Initialize the changes object for this item if it doesn't exist
+            if (!engagementChanges[id]) {
+                engagementChanges[id] = {};
+            }
+
+            // Handle dropdown value change
+            if (selectedValue === 'Not yet') {
+                // For "Not yet", set Engaged=No and set EngagementStatus
+                engagementChanges[id].Engaged = 'No';
+                engagementChanges[id].EngagementStatus = 'Not yet';
+            } else {
+                // For all other values, set Engaged=Yes and EngagementStatus to the selected value
+                engagementChanges[id].Engaged = 'Yes';
+                engagementChanges[id].EngagementStatus = selectedValue;
+            }
+
+            console.log(`Current changes for item ${id}:`, engagementChanges[id]);
+        }
+
+        // Update your dashboard's UI to reflect the new field name in relevant places
+        function updateEngagedStartupsTable() {
+            const tableBody = document.getElementById('engagedStartupsTableBody');
+            tableBody.innerHTML = '';
+
+            const engagedStartups = data.filter(item =>
+                item.startup &&
+                item.startup.trim() !== '' &&
+                (item.engaged?.toLowerCase() === 'yes' || item.Engaged?.toLowerCase() === 'yes')
+            );
+
+            // Sort the array to have contacted startups first
+            const sortedStartups = engagedStartups.sort((a, b) => {
+                // Sort by engagement status (Contacted first)
+                const aContacted = a.engagement === 'Contacted' || a.EngagementStatus === 'Connected through ITS';
+                const bContacted = b.engagement === 'Contacted' || b.EngagementStatus === 'Connected through ITS';
+
+                if (aContacted && !bContacted) return -1;
+                if (!aContacted && bContacted) return 1;
+
+                // If engagement status is the same, sort by date (newest first)
+                if (a.date && b.date) {
+                    return new Date(b.date) - new Date(a.date);
+                }
+                return 0;
+            });
+
+            sortedStartups.forEach(item => {
+                const row = tableBody.insertRow();
+
+                // Add the appropriate class based on engagement status
+                const status = item.EngagementStatus || item.engagementStatus || '';
+                if (status && status !== 'Not yet') {
+                    row.classList.add('engaged-row');
+                }
+
+                const nameCell = row.insertCell(0);
+                const nameLink = document.createElement('a');
+                if (item.link && item.link.trim()) {
+                    nameLink.href = item.link;
+                } else {
+                    nameLink.href = `https://www.google.com/search?q=${encodeURIComponent(item.startup)}`;
+                }
+                nameLink.textContent = item.startup;
+                nameLink.className = 'startup-link';
+                nameLink.target = '_blank';
+                nameCell.appendChild(nameLink);
+
+                row.insertCell(1).textContent = item.category;
+                row.insertCell(2).textContent = item.stage;
+
+                const contactCell = row.insertCell(3);
+                if (item.contact && item.contact.toLowerCase().startsWith('http')) {
+                    const contactLink = document.createElement('a');
+                    contactLink.href = item.contact;
+                    contactLink.textContent = item.contact;
+                    contactLink.className = 'contact-link';
+                    contactLink.target = '_blank';
+                    contactCell.appendChild(contactLink);
+                } else {
+                    contactCell.textContent = item.contact;
+                }
+
+                // Use PartnerNotes field instead of comments
+                row.insertCell(4).textContent = item.PartnerNotes || item.partnernotes || '';
+            });
+        }
+
+        function toggleComment(id) {
+            const commentInput = document.getElementById(`comment-${id}`);
+
+            if (commentInput.style.display === 'block') {
+                commentInput.style.display = 'none';
+            } else {
+                commentInput.style.display = 'block';
+                commentInput.focus();
+            }
+        }
+
+        function setupPaginationListeners() {
+            console.log("Setting up pagination listeners");
+
+            document.getElementById('prevPageBtn').addEventListener('click', function () {
+                console.log("Previous button clicked");
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateExploreMoreTable();
+                }
+            });
+
+            document.getElementById('nextPageBtn').addEventListener('click', function () {
+                console.log("Next button clicked");
+                const totalPages = Math.ceil(totalFilteredStartups.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateExploreMoreTable();
+                }
+            });
+        }
+
+        function saveEngagementChanges() {
+            console.log("Saving engagement changes:", engagementChanges);
+
+            if (Object.keys(engagementChanges).length === 0) {
+                alert("No changes to save.");
+                return;
+            }
+
+            // Format updates in the way Wix expects them
+            const updatesArray = Object.entries(engagementChanges).map(([id, changes]) => {
+                // Create a clean update object without internal tracking flags
+                const cleanChanges = { ...changes };
+
+                // Create the update object with both uppercase and lowercase field names
+                const updateObj = {
+                    _id: id
+                };
+
+                // Add both uppercase and lowercase versions of each field
+                if (cleanChanges.Engaged !== undefined) {
+                    updateObj.Engaged = cleanChanges.Engaged;
+                    updateObj.engaged = cleanChanges.Engaged;
+                }
+
+                if (cleanChanges.EngagementStatus !== undefined) {
+                    updateObj.EngagementStatus = cleanChanges.EngagementStatus;
+                    updateObj.engagementStatus = cleanChanges.EngagementStatus;
+                }
+
+                if (cleanChanges.PartnerNotes !== undefined) {
+                    updateObj.PartnerNotes = cleanChanges.PartnerNotes;
+                    updateObj.partnernotes = cleanChanges.PartnerNotes;
+                }
+
+                return updateObj;
+            });
+
+            try {
+                // Send the update message to Wix
+                window.parent.postMessage({
+                    type: "updateWixCollection",
+                    collection: "PartnerData",
+                    items: updatesArray,
+                    source: "dashboard"
+                }, "*");
+
+                console.log("Update message sent to Wix:", updatesArray);
+
+                // Update the local data to reflect changes immediately
+                Object.entries(engagementChanges).forEach(([id, changes]) => {
+                    const itemIndex = data.findIndex(item => item._id === id);
+                    if (itemIndex >= 0) {
+                        const cleanChanges = { ...changes };
+
+                        // Apply changes to local data with both case versions
+                        if (cleanChanges.Engaged !== undefined) {
+                            data[itemIndex].Engaged = cleanChanges.Engaged;
+                            data[itemIndex].engaged = cleanChanges.Engaged;
+                        }
+
+                        if (cleanChanges.EngagementStatus !== undefined) {
+                            data[itemIndex].EngagementStatus = cleanChanges.EngagementStatus;
+                            data[itemIndex].engagementStatus = cleanChanges.EngagementStatus;
+                        }
+
+                        if (cleanChanges.PartnerNotes !== undefined) {
+                            data[itemIndex].PartnerNotes = cleanChanges.PartnerNotes;
+                            data[itemIndex].partnernotes = cleanChanges.PartnerNotes;
+                        }
+
+                        console.log("Updated local data for item:", id, data[itemIndex]);
+                    }
+                });
+
+                // Reset changes after sending the update
+                engagementChanges = {};
+
+                // Update dashboard to reflect changes
+                updateDashboard();
+                updateExploreMoreTable();
+
+                alert("Changes saved successfully!");
+            } catch (error) {
+                console.error("Error sending update to Wix:", error);
+                alert("Error saving changes: " + (error.message || "Unknown error"));
+            }
+        }
+        function updateActivitiesTable() {
+            const tableBody = document.getElementById('activitiesTableBody');
+            tableBody.innerHTML = '';
+
+            const activitiesData = data
+                .filter(item => item.quarter === 'Engagement Activity')
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            activitiesData.forEach(item => {
+                const row = tableBody.insertRow();
+                const activityCell = row.insertCell(0);
+                const dateCell = row.insertCell(1);
+                const descCell = row.insertCell(2);
+
+                activityCell.textContent = item.engagement;
+                dateCell.textContent = item.date;
+                descCell.textContent = item.comments || '';
+                descCell.className = 'description';
+            });
+
+            document.getElementById('totalActivities').textContent = activitiesData.length;
+        }
+
+        function showReportsModal() {
+            document.getElementById('reportsModal').style.display = 'flex';
+        }
+
+        function hideReportsModal() {
+            document.getElementById('reportsModal').style.display = 'none';
+        }
+
+        function showActivitiesModal() {
+            document.getElementById('activitiesModal').style.display = 'flex';
+            updateActivitiesTable();
+        }
+
+        function hideActivitiesModal() {
+            document.getElementById('activitiesModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const reportsModal = document.getElementById('reportsModal');
+            const activitiesModal = document.getElementById('activitiesModal');
+            const engagedStartupsModal = document.getElementById('engagedStartupsModal');
+
+            if (event.target === reportsModal) {
+                hideReportsModal();
+            }
+            if (event.target === activitiesModal) {
+                hideActivitiesModal();
+            }
+            if (event.target === engagedStartupsModal) {
+                hideEngagedStartupsModal();
+            }
+        }
+
+        window.addEventListener('resize', function () {
+            if (categoryChart) categoryChart.update();
+            if (stageChart) stageChart.update();
+            if (countryChart) countryChart.update();
+        });
+    </script>
+</body>
+
+</html>
